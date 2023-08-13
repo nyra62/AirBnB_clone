@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """Defines unittests for models/engine/file_storage.py.
+
 Unittest classes:
     TestFileStorage_instantiation
     TestFileStorage_methods
 """
 import os
-import pep8
 import json
 import models
 import unittest
@@ -62,14 +62,6 @@ class TestFileStorage_methods(unittest.TestCase):
             pass
         FileStorage._FileStorage__objects = {}
 
-    def test_style_check(self):
-        """
-        Tests pep8 style
-        """
-        style = pep8.StyleGuide(quiet=True)
-        p = style.check_files(['models/engine/file_storage.py'])
-        self.assertEqual(p.total_errors, 0, "fix pep8")
-
     def test_all(self):
         self.assertEqual(dict, type(models.storage.all()))
 
@@ -111,6 +103,10 @@ class TestFileStorage_methods(unittest.TestCase):
         with self.assertRaises(TypeError):
             models.storage.new(BaseModel(), 1)
 
+    def test_new_with_None(self):
+        with self.assertRaises(AttributeError):
+            models.storage.new(None)
+
     def test_save(self):
         bm = BaseModel()
         us = User()
@@ -143,22 +139,6 @@ class TestFileStorage_methods(unittest.TestCase):
             models.storage.save(None)
 
     def test_reload(self):
-        """
-        Tests method: reload (reloads objects from string file)
-        """
-        a_storage = FileStorage()
-        try:
-            os.remove("file.json")
-        except FileNotFoundError:
-            pass
-        with open("file.json", "w") as f:
-            f.write("{}")
-        with open("file.json", "r") as r:
-            for line in r:
-                self.assertEqual(line, "{}")
-        self.assertIs(a_storage.reload(), None)
-
-    """def test_reload(self):
         bm = BaseModel()
         us = User()
         st = State()
@@ -182,7 +162,7 @@ class TestFileStorage_methods(unittest.TestCase):
         self.assertIn("Place." + pl.id, objs)
         self.assertIn("City." + cy.id, objs)
         self.assertIn("Amenity." + am.id, objs)
-        self.assertIn("Review." + rv.id, objs)"""
+        self.assertIn("Review." + rv.id, objs)
 
     def test_reload_with_arg(self):
         with self.assertRaises(TypeError):
@@ -191,4 +171,3 @@ class TestFileStorage_methods(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
